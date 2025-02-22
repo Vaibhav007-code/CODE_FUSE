@@ -14,7 +14,7 @@ const ContestCard = ({ contest }) => {
 
   return (
     <div
-      className="contest-card"
+      className={`contest-card ${showReminder ? 'modal-open' : ''}`}
       style={{ borderLeft: `4px solid ${platformColors[contest.platform]}` }}
     >
       <div className="card-header">
@@ -60,10 +60,7 @@ const ContestCard = ({ contest }) => {
       </div>
 
       {showReminder && (
-        <ReminderModal
-          contest={contest}
-          onClose={() => setShowReminder(false)}
-        />
+        <ReminderModal contest={contest} onClose={() => setShowReminder(false)} />
       )}
     </div>
   );

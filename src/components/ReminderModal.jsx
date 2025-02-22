@@ -28,13 +28,16 @@ const ReminderModal = ({ contest, onClose }) => {
         });
         localStorage.setItem('contestReminders', JSON.stringify(reminders));
 
-        // Schedule the notification
+        // Schedule the notification and alarm sound
         const timeUntilReminder = reminderTimeMs - Date.now();
         if (timeUntilReminder > 0) {
           setTimeout(() => {
             new Notification(`Contest Reminder: ${contest.name}`, {
               body: `The contest starts in ${reminderTime} minutes on ${contest.platform}!`
             });
+            // Play alarm sound – ensure you have alarm.mp3 in your public folder
+            const alarm = new Audio('/alarm.mp3');
+            alarm.play();
           }, timeUntilReminder);
         }
 

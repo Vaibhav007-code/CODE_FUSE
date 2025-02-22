@@ -1,36 +1,87 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ContestCard from '../components/ContestCard';
-import { fetchContests } from '../services/api';
+import { fetchContests } from '../services/api'; // Updated import
 
 const Home = () => {
   const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [filteredContests, setFilteredContests] = useState([]);
+  const [platformFilter, setPlatformFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
-    const loadContests = async () => {
-      const data = await fetchContests();
+    // Use fetchContests instead of getContests
+    fetchContests().then((data) => {
       setContests(data);
-      setLoading(false);
-    };
-    loadContests();
+      setFilteredContests(data);
+    });
   }, []);
 
+  useEffect(() => {
+    filterContests();
+  }, [platformFilter, statusFilter, contests]);
+
+  const getStatus = (contest) => {
+    const now = Date.now();
+    const start = new Date(contest.startTime).getTime();
+    const end = new Date(contest.endTime).getTime();
+    if (now < start) {
+      return 'Upcoming';
+    } else if (now >= start && now <= end) {
+      return 'Running';
+    } else {
+      return 'Ended';
+    }
+  };
+
+  const filterContests = () => {
+    let filtered = contests;
+    if (platformFilter !== 'All') {
+      filtered = filtered.filter(
+        (contest) => contest.platform === platformFilter
+      );
+    }
+    if (statusFilter !== 'All') {
+      filtered = filtered.filter(
+        (contest) => getStatus(contest) === statusFilter
+      );
+    }
+    setFilteredContests(filtered);
+  };
+
   return (
-    <main className="main-content">
-      <div className="container">
-        <h2 className="section-title">Upcoming Contests</h2>
-        
-        {loading ? (
-          <div className="loader">Loading contests...</div>
+    <div className="container">
+      <h2 className="section-title">Contests</h2>
+      <div className="filters">
+        <select
+          value={platformFilter}
+          onChange={(e) => setPlatformFilter(e.target.value)}
+        >
+          <option value="All">All Platforms</option>
+          <option value="Codeforces">Codeforces</option>
+          <option value="LeetCode">LeetCode</option>
+          <option value="CodeChef">CodeChef</option>
+          <option value="HackerRank">HackerRank</option>
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="All">All Statuses</option>
+          <option value="Upcoming">Upcoming</option>
+          <option value="Running">Running</option>
+          <option value="Ended">Ended</option>
+        </select>
+      </div>
+      <div className="contest-grid">
+        {filteredContests.length > 0 ? (
+          filteredContests.map((contest, index) => (
+            <ContestCard key={contest.id || index} contest={contest} />
+          ))
         ) : (
-          <div className="contest-grid">
-            {contests.map(contest => (
-              <ContestCard key={`${contest.platform}-${contest.name}`} contest={contest} />
-            ))}
-          </div>
+          <p>No contests found.</p>
         )}
       </div>
-    </main>
+    </div>
   );
 };
 

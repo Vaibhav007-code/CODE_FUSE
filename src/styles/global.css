@@ -79,12 +79,28 @@
     color: var(--text-primary);
   }
   
+  /* Filters */
+  .filters {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .filters select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: var(--card-bg);
+    color: var(--text-primary);
+  }
+  
   /* Contest grid */
   .contest-grid {
     display: grid;
     gap: 1.5rem;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    margin: 2rem 0;
+    margin-bottom: 2rem;
   }
   
   /* Contest card */
@@ -94,10 +110,16 @@
     padding: 1.5rem;
     box-shadow: var(--shadow);
     transition: transform 0.2s ease;
+    will-change: transform;
   }
   
   .contest-card:hover {
     transform: translateY(-4px);
+  }
+  
+  /* Disable hover transform when modal is open */
+  .contest-card.modal-open:hover {
+    transform: none;
   }
   
   .card-header {
@@ -228,6 +250,8 @@
     padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid #ccc;
+    background: var(--card-bg);
+    color: var(--text-primary);
   }
   
   .success-message {
@@ -256,6 +280,12 @@
   .btn-cancel {
     background: #e5e7eb;
     color: var(--text-primary);
+  }
+  
+  /* Improve Cancel button visibility in dark mode */
+  .dark-mode .btn-cancel {
+    background: #333;
+    color: #fff;
   }
   
   .btn-set {
